@@ -3,5 +3,7 @@ __pycache__/
 *.db
 .venv/
 venv/
+.pytest_cache/
+.docker-config/
 .git/
 PROJECT_SPEC.md

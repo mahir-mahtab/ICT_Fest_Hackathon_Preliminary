@@ -5,7 +5,6 @@ from fastapi import APIRouter, Depends, Query
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
-from .. import cache
 from ..auth import require_admin
 from ..database import get_db
 from ..errors import AppError
@@ -22,10 +21,6 @@ def usage_report(
     db: Session = Depends(get_db),
     admin: User = Depends(require_admin),
 ):
-    cached = cache.get_report(admin.org_id, frm, to)
-    if cached is not None:
-        return cached
-
     try:
         from_date = datetime.strptime(frm, "%Y-%m-%d").date()
         to_date = datetime.strptime(to, "%Y-%m-%d").date()
@@ -57,9 +52,7 @@ def usage_report(
             }
         )
 
-    result = {"from": frm, "to": to, "rooms": room_rows}
-    cache.set_report(admin.org_id, frm, to, result)
-    return result
+    return {"from": frm, "to": to, "rooms": room_rows}
 
 
 @router.get("/export")
